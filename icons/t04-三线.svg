@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1a1a2e"/>
+      <stop offset="100%" style="stop-color:#16213e"/>
+    </linearGradient>
+  </defs>
+  <rect width="1024" height="1024" rx="200" fill="url(#bg)"/>
+  <line x1="200" y1="500" x2="450" y2="350" stroke="#ef4444" stroke-width="14" stroke-linecap="round"/>
+<line x1="450" y1="350" x2="820" y2="450" stroke="#ef4444" stroke-width="14" stroke-linecap="round"/>
+<line x1="200" y1="600" x2="450" y2="450" stroke="#f97316" stroke-width="14" stroke-linecap="round"/>
+<line x1="450" y1="450" x2="820" y2="550" stroke="#f97316" stroke-width="14" stroke-linecap="round"/>
+<line x1="200" y1="700" x2="450" y2="550" stroke="#eab308" stroke-width="14" stroke-linecap="round"/>
+<line x1="450" y1="550" x2="820" y2="650" stroke="#eab308" stroke-width="14" stroke-linecap="round"/>
+<circle cx="820" cy="450" r="18" fill="#10b981" stroke="#10b981" stroke-width="0"/>
+<text x="512" y="900" fill="#aaa" font-size="60" font-family="Arial,sans-serif" font-weight="bold" text-anchor="middle">T04</text>
+</svg>

@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1a1a2e"/>
+      <stop offset="100%" style="stop-color:#16213e"/>
+    </linearGradient>
+  </defs>
+  <rect width="1024" height="1024" rx="200" fill="url(#bg)"/>
+  <rect x="250" y="350" width="80" height="300" fill="#ef4444" rx="8"/>
+<line x1="290" y1="300" x2="290" y2="350" stroke="#ef4444" stroke-width="6" stroke-linecap="round"/>
+<line x1="290" y1="650" x2="290" y2="700" stroke="#ef4444" stroke-width="6" stroke-linecap="round"/>
+<rect x="380" y="380" width="80" height="10" fill="#fff" rx="0"/>
+<text x="420" y="440" fill="#ffd700" font-size="50" font-family="Arial,sans-serif" font-weight="bold" text-anchor="middle">GAP</text>
+<rect x="510" y="200" width="80" height="250" fill="#ef4444" rx="8"/>
+<line x1="550" y1="150" x2="550" y2="200" stroke="#ef4444" stroke-width="6" stroke-linecap="round"/>
+<line x1="550" y1="450" x2="550" y2="500" stroke="#ef4444" stroke-width="6" stroke-linecap="round"/>
+<rect x="650" y="300" width="80" height="350" fill="#10b981" rx="8"/>
+<line x1="690" y1="250" x2="690" y2="300" stroke="#10b981" stroke-width="6" stroke-linecap="round"/>
+<line x1="690" y1="650" x2="690" y2="700" stroke="#10b981" stroke-width="6" stroke-linecap="round"/>
+<text x="512" y="900" fill="#aaa" font-size="60" font-family="Arial,sans-serif" font-weight="bold" text-anchor="middle">M04</text>
+</svg>

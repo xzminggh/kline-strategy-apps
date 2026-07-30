@@ -17,6 +17,8 @@ interface KlineChartProps {
   defaultVisibleCount?: number;
   stockCode?: string;
   stockName?: string;
+  currentPrice?: number | null;
+  priceChangePct?: number;
 }
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
@@ -40,6 +42,8 @@ export default function KlineChart({
   defaultVisibleCount = 60,
   stockCode,
   stockName,
+  currentPrice,
+  priceChangePct = 0,
 }: KlineChartProps) {
   const chartWidth = SCREEN_WIDTH - 40;
   const priceChartHeight = height - VOLUME_HEIGHT - TIME_LABEL_HEIGHT - PADDING.top - PADDING.bottom - 10;
@@ -54,13 +58,17 @@ export default function KlineChart({
   const lastTapX = useRef(0);
   const movedDuringTouch = useRef(false);
 
+  // 跟踪当前 data.length，供 PanResponder 闭包读取（避免过期值）
+  const dataRef = useRef(data.length);
+  dataRef.current = data.length;
+
   // 数据全量重置时同步 endIndex
   React.useEffect(() => {
     setEndIndex(data.length);
     setVisibleCount(defaultVisibleCount);
   }, [data, defaultVisibleCount]);
 
-  // 计算可见数据切片
+  // 计算可见数据切片（数据已是升序，直接用）
   const totalCount = data.length;
   const actualVisible = Math.min(visibleCount, totalCount);
   const actualEnd = Math.min(Math.max(endIndex, actualVisible), totalCount);
@@ -204,7 +212,9 @@ export default function KlineChart({
           if (candlePlusGap > 0) {
             const movedCandles = Math.round(gestureState.dx / candlePlusGap);
             const newEnd = panState.current.startEndIndex - movedCandles;
-            setEndIndex(Math.max(actualVisible, Math.min(totalCount, newEnd)));
+            const curTotal = dataRef.current;
+            const curVisible = Math.min(visibleCount, curTotal);
+            setEndIndex(Math.max(curVisible, Math.min(curTotal, newEnd)));
           }
         }
       },
@@ -212,14 +222,18 @@ export default function KlineChart({
         pinchState.current.active = false;
         panState.current.active = false;
         // 双击检测
-        if (!movedDuringTouch.current && evt.nativeEvent.touches.length === 0) {
+        if (!movedDuringTouch.current) {
           const now = Date.now();
           const tapX = evt.nativeEvent.locationX;
-          if (now - lastTapTime.current < 300 && Math.abs(tapX - lastTapX.current) < 30) {
-            // 双击 - 重置
+          const timeDiff = now - lastTapTime.current;
+          const xDiff = Math.abs(tapX - lastTapX.current);
+          // 双击：300ms内、水平距离30px内
+          if (timeDiff < 300 && xDiff < 30) {
+            // 双击 - 重置到最新K线
             setVisibleCount(defaultVisibleCount);
-            setEndIndex(totalCount);
+            setEndIndex(dataRef.current);
             setTouchIndex(null);
+            lastTapTime.current = 0; // 重置，避免三击误判
           } else {
             // 单击 - 显示十字光标
             const x = tapX - PADDING.left;
@@ -227,9 +241,9 @@ export default function KlineChart({
             if (idx >= 0 && idx < visibleData.length) {
               setTouchIndex(idx);
             }
+            lastTapTime.current = now;
+            lastTapX.current = tapX;
           }
-          lastTapTime.current = now;
-          lastTapX.current = tapX;
         }
       },
       onPanResponderTerminate: () => {
@@ -446,8 +460,16 @@ export default function KlineChart({
     <View style={styles.container}>
       <View style={styles.rangeInfo}>
         <View style={styles.stockInfo}>
-          {stockCode && <Text style={styles.stockCode}>{stockCode}</Text>}
-          {stockName && <Text style={styles.stockName}>{stockName}</Text>}
+          {currentPrice !== null && currentPrice !== undefined && (
+            <Text style={[styles.currentPrice, { color: priceChangePct >= 0 ? '#ef4444' : '#10b981' }]}>
+              {currentPrice.toFixed(2)}
+            </Text>
+          )}
+          {currentPrice !== null && currentPrice !== undefined && priceChangePct !== 0 && (
+            <Text style={[styles.priceChangePct, { color: priceChangePct >= 0 ? '#ef4444' : '#10b981' }]}>
+              {priceChangePct >= 0 ? '+' : ''}{priceChangePct.toFixed(2)}%
+            </Text>
+          )}
         </View>
         <Text style={styles.rangeInfoText}>
           显示 {startIndex + 1}-{actualEnd} / 共 {totalCount} 条
@@ -532,6 +554,17 @@ const styles = StyleSheet.create({
   stockName: {
     color: '#00d4ff',
     fontSize: 12,
+  },
+  currentPrice: {
+    color: '#ffffff',
+    fontSize: 14,
+    fontWeight: 'bold',
+    marginLeft: 8,
+  },
+  priceChangePct: {
+    color: '#ffffff',
+    fontSize: 12,
+    fontWeight: '500',
   },
   rangeInfoText: {
     color: '#00d4ff',

@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1a1a2e"/>
+      <stop offset="100%" style="stop-color:#16213e"/>
+    </linearGradient>
+  </defs>
+  <rect width="1024" height="1024" rx="200" fill="url(#bg)"/>
+  <line x1="180" y1="250" x2="840" y2="250" stroke="#ef4444" stroke-width="4" stroke-linecap="round"/>
+<text x="150" y="260" fill="#ef4444" font-size="50" font-family="Arial,sans-serif" font-weight="bold" text-anchor="end">0%</text>
+<line x1="180" y1="350" x2="840" y2="350" stroke="#f97316" stroke-width="4" stroke-linecap="round"/>
+<text x="150" y="360" fill="#f97316" font-size="50" font-family="Arial,sans-serif" font-weight="bold" text-anchor="end">23.6%</text>
+<line x1="180" y1="450" x2="840" y2="450" stroke="#eab308" stroke-width="4" stroke-linecap="round"/>
+<text x="150" y="460" fill="#eab308" font-size="50" font-family="Arial,sans-serif" font-weight="bold" text-anchor="end">38.2%</text>
+<line x1="180" y1="550" x2="840" y2="550" stroke="#22c55e" stroke-width="4" stroke-linecap="round"/>
+<text x="150" y="560" fill="#22c55e" font-size="50" font-family="Arial,sans-serif" font-weight="bold" text-anchor="end">50%</text>
+<line x1="180" y1="650" x2="840" y2="650" stroke="#3b82f6" stroke-width="4" stroke-linecap="round"/>
+<text x="150" y="660" fill="#3b82f6" font-size="50" font-family="Arial,sans-serif" font-weight="bold" text-anchor="end">61.8%</text>
+<line x1="180" y1="750" x2="840" y2="750" stroke="#8b5cf6" stroke-width="4" stroke-linecap="round"/>
+<text x="150" y="760" fill="#8b5cf6" font-size="50" font-family="Arial,sans-serif" font-weight="bold" text-anchor="end">100%</text>
+<circle cx="550" cy="550" r="16" fill="#ffd700" stroke="#ffd700" stroke-width="0"/>
+<text x="512" y="900" fill="#aaa" font-size="60" font-family="Arial,sans-serif" font-weight="bold" text-anchor="middle">K03</text>
+</svg>

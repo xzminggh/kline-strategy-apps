@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1a1a2e"/>
+      <stop offset="100%" style="stop-color:#16213e"/>
+    </linearGradient>
+  </defs>
+  <rect width="1024" height="1024" rx="200" fill="url(#bg)"/>
+  <rect x="220" y="500" width="40" height="200" fill="#3b82f6" rx="4"/>
+<rect x="300" y="520" width="40" height="180" fill="#3b82f6" rx="4"/>
+<rect x="380" y="540" width="40" height="160" fill="#3b82f6" rx="4"/>
+<rect x="460" y="560" width="40" height="140" fill="#3b82f6" rx="4"/>
+<rect x="540" y="580" width="40" height="120" fill="#3b82f6" rx="4"/>
+<rect x="620" y="600" width="40" height="100" fill="#3b82f6" rx="4"/>
+<rect x="700" y="550" width="40" height="150" fill="#ef4444" rx="4"/>
+<rect x="780" y="530" width="40" height="170" fill="#10b981" rx="4"/>
+<line x1="820" y1="450" x2="860" y2="300" stroke="#ffd700" stroke-width="12" stroke-linecap="round"/>
+  <polygon points="860,300 870.3990027523577,338.6246131599587 831.7496051683079,328.31810713754544" fill="#ffd700"/>
+<text x="512" y="280" fill="#ffd700" font-size="80" font-family="Arial,sans-serif" font-weight="bold" text-anchor="middle">ATR</text>
+<line x1="300" y1="480" x2="700" y2="550" stroke="#ef4444" stroke-width="6" stroke-linecap="round"/>
+  <polygon points="700,550 662.4299370426153,563.7291794867047 669.3251503127052,524.3279608004765" fill="#ef4444"/>
+<text x="512" y="900" fill="#aaa" font-size="60" font-family="Arial,sans-serif" font-weight="bold" text-anchor="middle">V02</text>
+</svg>

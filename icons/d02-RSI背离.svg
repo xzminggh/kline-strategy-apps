@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1a1a2e"/>
+      <stop offset="100%" style="stop-color:#16213e"/>
+    </linearGradient>
+  </defs>
+  <rect width="1024" height="1024" rx="200" fill="url(#bg)"/>
+  <path d="M200,600 Q300,500 400,400 Q500,350 600,380 Q700,320 800,300" fill="none" stroke="#ef4444" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M200,500 Q300,380 400,350 Q500,370 600,400 Q700,420 800,450" fill="none" stroke="#3b82f6" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+<line x1="400" y1="400" x2="800" y2="300" stroke="#ef4444" stroke-width="4" stroke-linecap="round"/>
+<line x1="400" y1="350" x2="800" y2="450" stroke="#3b82f6" stroke-width="4" stroke-linecap="round"/>
+<text x="600" y="260" fill="#ffd700" font-size="70" font-family="Arial,sans-serif" font-weight="bold" text-anchor="middle">背离</text>
+<text x="512" y="900" fill="#aaa" font-size="60" font-family="Arial,sans-serif" font-weight="bold" text-anchor="middle">D02</text>
+</svg>

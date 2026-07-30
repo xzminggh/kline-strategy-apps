@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1a1a2e"/>
+      <stop offset="100%" style="stop-color:#16213e"/>
+    </linearGradient>
+  </defs>
+  <rect width="1024" height="1024" rx="200" fill="url(#bg)"/>
+  <rect x="220" y="480" width="30" height="80" fill="#ef4444" rx="4"/>
+<rect x="280" y="460" width="30" height="100" fill="#ef4444" rx="4"/>
+<rect x="340" y="500" width="30" height="60" fill="#10b981" rx="4"/>
+<rect x="400" y="520" width="30" height="40" fill="#10b981" rx="4"/>
+<rect x="460" y="440" width="30" height="120" fill="#ef4444" rx="4"/>
+<rect x="520" y="420" width="30" height="140" fill="#ef4444" rx="4"/>
+<rect x="580" y="470" width="30" height="90" fill="#10b981" rx="4"/>
+<rect x="640" y="490" width="30" height="70" fill="#10b981" rx="4"/>
+<rect x="700" y="450" width="30" height="110" fill="#ef4444" rx="4"/>
+<line x1="200" y1="500" x2="820" y2="500" stroke="#666" stroke-width="4" stroke-linecap="round"/>
+<path d="M200,480 Q400,400 500,420 Q600,380 800,430" fill="none" stroke="#3b82f6" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M200,490 Q400,450 500,460 Q600,440 800,450" fill="none" stroke="#f97316" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="512" y="900" fill="#aaa" font-size="60" font-family="Arial,sans-serif" font-weight="bold" text-anchor="middle">D01</text>
+</svg>

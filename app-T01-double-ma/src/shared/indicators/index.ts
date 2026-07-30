@@ -1,1 +1,1 @@
-export { calculateMA, calculateEMA, calculateRSI, calculateMACD, calculateBollinger, calculateATR, calculateCCI, calculateMOM, calculateROC, calculateVolumeMA, calculateBollingerWidth, calculateGuppyMA, calculateSlope, calculateAmplitude } from './Indicators';
+export { calculateMA, calculateEMA, calculateRSI, calculateMACD, calculateBollinger, calculateATR, calculateCCI, calculateMOM, calculateROC, calculateVolumeMA, calculateBollingerWidth, calculateGuppyMA, calculateSlope, calculateAmplitude, findLocalExtrema, calculateFibonacciLevels } from './Indicators';

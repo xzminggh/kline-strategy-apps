@@ -1,0 +1,10 @@
+{
+  "name": "kline-shared",
+  "version": "1.0.0",
+  "description": "共享模块：指标算法、数据抓取、数据库、组件",
+  "main": "index.ts",
+  "dependencies": {
+    "expo-sqlite": "~57.0.1",
+    "react-native-svg": "15.15.4"
+  }
+}

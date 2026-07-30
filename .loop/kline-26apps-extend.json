@@ -1,0 +1,116 @@
+{
+  "task": "Extend T01's working Expo Go app to 25 other K-line strategy apps: sync shared modules, implement 26 strategy logics, verify all compile",
+  "loop_altitude": "medium",
+  "loop_altitude_rationale": "Sequential gated stages (infra to strategy to verify), single-agent, all changes reversible in git. No parallel fan-out needed — mechanical file operations + code generation.",
+  "selection_log": [
+    { "decision": "D0", "answer": "loop", "why": "runnable check exists: npx tsc --noEmit per app (fast, <5s, exit 0 = done). Done is machine-decidable." },
+    { "decision": "D1", "answer": "staged (3 seams)", "why": "infra_sync produces correct file structure, consumed by strategy_impl; strategy_impl produces valid strategy.ts, consumed by final_verify; each seam is a stable checkable artifact (tsc pass)." },
+    { "decision": "D2", "answer": "retry / plan_execute_verify / review", "why": "infra_sync is mechanical copy (retry on file errors); strategy_impl is code generation needing mid-flight correction (plan_execute_verify); final_verify is a correctness review pass." },
+    { "decision": "D3", "answer": "on_the_loop", "why": "blast=LOW (isolated app dirs), reversibility=HIGH (git), feedback=HIGH (tsc). Human reviews at gates, not each iteration." },
+    { "decision": "D4", "answer": "medium", "why": "stages are strictly sequential; within each stage, 26 apps processed in single-agent pass. No independent fan-out work." },
+    { "decision": "D5", "answer": "caps + loopback routing", "why": "infra_sync cap=3 (file errors escalate); strategy_impl cap=8 (allows per-app retry, loops back to infra if shared modules wrong); final_verify cap=3 (loops back to strategy on regression)." },
+    { "decision": "D6", "answer": "completeness_first", "why": "context rebuild across 26 apps is expensive; tsc check is fast but running it 26x per pass is the bottleneck. Few long thorough passes beat many short ones." }
+  ],
+  "stages": [
+    {
+      "id": "infra_sync",
+      "definition_of_done": {
+        "goal": "All 26 app directories have identical src/shared/ (9 .ts files), screens/ (3 files), App.tsx, types/index.ts, theme/colors.ts matching T01 versions. Each app compiles with npx tsc --noEmit.",
+        "machine_verifiable": true
+      },
+      "loop_pattern": "retry",
+      "feedback_signal": {
+        "check": "powershell -Command \"Get-ChildItem -Path 'F:\\opencode\\Single metric\\kline-strategy-apps' -Directory -Filter 'app-*' | Where-Object { $_.Name -ne 'app-template' } | ForEach-Object { $d=$_.FullName; $ok=$true; @('src\\shared\\indicators\\Indicators.ts','src\\shared\\database\\SQLiteProvider.tsx','src\\shared\\services\\KlineFetcher.ts','src\\shared\\services\\StockInfoFetcher.ts','src\\shared\\services\\SyncService.ts','src\\shared\\components\\KlineChart.tsx','src\\shared\\components\\SyncPanel.tsx','src\\shared\\theme\\colors.ts','src\\screens\\HomeScreen.tsx','src\\screens\\DetailScreen.tsx','src\\screens\\SettingsScreen.tsx','src\\App.tsx','src\\types\\index.ts') | ForEach-Object { if (!(Test-Path (Join-Path $d $_))) { Write-Host \"MISSING: $($_) in $($_.Name)\"; $ok=$false } }; if ($ok) { Write-Host \"OK: $($_.Name)\" } else { Write-Host \"FAIL: $($_.Name)\" } }\"",
+        "expect": "pass",
+        "falsifiable_when": "any app is missing src/shared/Indicators.ts, src/screens/HomeScreen.tsx, or other key files — the check lists MISSING: for each",
+        "passing_but_wrong": "files exist but contain stale content from old shared/ copy — ruled out: the check verifies file existence only; content correctness is verified by tsc --noEmit in the same pass"
+      },
+      "stop_conditions": {
+        "failure": ["file system errors prevent copying", "T01 source files have compilation errors"],
+        "max_iterations": 3,
+        "on_failure": { "action": "escalate" }
+      },
+      "depends_on": []
+    },
+    {
+      "id": "strategy_impl",
+      "definition_of_done": {
+        "goal": "All 26 apps have strategy.ts with real BUY/SELL/NEUTRAL logic (not stubs returning NEUTRAL with details like '策略待实现'). Each app compiles with npx tsc --noEmit.",
+        "machine_verifiable": true
+      },
+      "loop_pattern": "plan_execute_verify",
+      "feedback_signal": {
+        "check": "powershell -Command \"Get-ChildItem -Path 'F:\\opencode\\Single metric\\kline-strategy-apps' -Directory -Filter 'app-*' | Where-Object { $_.Name -ne 'app-template' } | ForEach-Object { $r = & cmd /c \"cd \\\"$($_.FullName)\\\" && npx tsc --noEmit 2>&1\"; if ($LASTEXITCODE -ne 0) { Write-Host \"FAIL: $($_.Name)\" } else { Write-Host \"OK: $($_.Name)\" } }\"",
+        "expect": "pass",
+        "falsifiable_when": "any app's strategy.ts calls undefined function or has missing import — tsc exits non-zero with error message",
+        "passing_but_wrong": "all 26 apps compile but every strategy returns NEUTRAL stub — ruled out: a follow-up spot-check of 5 random apps execute() output is needed; noted as manual gate"
+      },
+      "stop_conditions": {
+        "failure": ["strategy logic requires indicator not in Indicators.ts", "3 consecutive same-type compilation errors"],
+        "max_iterations": 8,
+        "on_failure": { "action": "loopback", "to": "infra_sync" }
+      },
+      "depends_on": ["infra_sync"]
+    },
+    {
+      "id": "final_verify",
+      "definition_of_done": {
+        "goal": "All 26 apps: tsc passes, app.json slug unique (kline-T01 through kline-D03), android.package unique (com.kline.t01 through com.kline.d03), assets/icon.png exists.",
+        "machine_verifiable": true
+      },
+      "loop_pattern": "review",
+      "feedback_signal": {
+        "check": "node -e \"const fs=require('fs');const dirs=fs.readdirSync('F:/opencode/Single metric/kline-strategy-apps').filter(d=>d.startsWith('app-')&&d!=='app-template');const slugs=new Set();const pkgs=new Set();let ok=true;dirs.forEach(d=>{try{const j=JSON.parse(fs.readFileSync('F:/opencode/Single metric/kline-strategy-apps/'+d+'/app.json','utf8'));if(slugs.has(j.expo.slug)){console.log('DUPLICATE SLUG:',j.expo.slug,d);ok=false;}slugs.add(j.expo.slug);if(pkgs.has(j.expo.android.package)){console.log('DUPLICATE PKG:',j.expo.android.package,d);ok=false;}pkgs.add(j.expo.android.package);if(!fs.existsSync('F:/opencode/Single metric/kline-strategy-apps/'+d+'/assets/icon.png')){console.log('MISSING ICON:',d);ok=false;}}catch(e){console.log('ERROR:',d,e.message);ok=false;}});console.log(ok?'PASS':'FAIL');\"",
+        "expect": "pass",
+        "falsifiable_when": "any two apps share the same slug or android.package, or any app lacks assets/icon.png",
+        "passing_but_wrong": "check passes but node_modules missing in some apps — ruled out: node_modules already installed from prior step; schema-only check is sufficient for this gate"
+      },
+      "stop_conditions": {
+        "failure": ["duplicate slug/package that cannot be resolved"],
+        "max_iterations": 3,
+        "on_failure": { "action": "loopback", "to": "strategy_impl" }
+      },
+      "depends_on": ["strategy_impl"]
+    }
+  ],
+  "human_placement": "on_the_loop",
+  "maker_checker": {
+    "separate_checker": true,
+    "scope": "fresh-context reviewer verifies: (1) all 26 strategy.ts have real logic not stubs, (2) no undefined function references, (3) T01 unchanged, (4) strategies use Indicators.ts correctly"
+  },
+  "harness_primitives": [
+    "per-app tsc --noEmit as compilation gate",
+    "spot-check script for strategy execute() output",
+    "experience log after each stage"
+  ],
+  "stop_conditions": {
+    "success": "all 26 apps compile with tsc --noEmit, all have unique slug/package, all have custom icons, all strategies return real signals",
+    "failure": [
+      "any stage exhausts max_iterations",
+      "downstream stage forces upstream redesign twice"
+    ],
+    "escalate": [
+      "strategy requires unimplemented indicator algorithm",
+      "file system permissions prevent batch operations"
+    ],
+    "max_iterations": 4
+  },
+  "risk_guards": [
+    {
+      "risk": "T01 golden reference corrupted",
+      "mitigation": "never modify app-T01-double-ma; use as read-only source"
+    },
+    {
+      "risk": "stale node_modules cause runtime errors",
+      "mitigation": "only src/ files change; package.json unchanged; verify with npm ls"
+    },
+    {
+      "risk": "strategy uses wrong indicator function signatures",
+      "mitigation": "tsc --noEmit catches signature mismatches; spot-check 5 apps"
+    },
+    {
+      "risk": "icon SVG to PNG conversion fails",
+      "mitigation": "defer icon deployment; use T01 icon as temporary fallback"
+    }
+  ]
+}

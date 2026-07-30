@@ -1,51 +1,37 @@
 /**
- * 批量安装所有App的依赖
+ * install-all.js — Run npm install in all 25 non-T01 app directories
  */
-
+const { execSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
-const { execSync } = require('child_process');
 
-const rootDir = path.resolve(__dirname, '..');
-
-// 先安装shared
-console.log('安装 shared 模块依赖...\n');
-try {
-  execSync('npm install', { 
-    cwd: path.join(rootDir, 'shared'),
-    stdio: 'inherit' 
-  });
-  console.log('✅ shared 安装完成\n');
-} catch (e) {
-  console.log('⚠️ shared 安装失败，继续...\n');
-}
-
-// 获取所有app-*目录
-const appDirs = fs.readdirSync(rootDir)
-  .filter(dir => dir.startsWith('app-') && dir !== 'app-template')
+const ROOT = 'F:\\opencode\\Single metric\\kline-strategy-apps';
+const apps = fs.readdirSync(ROOT)
+  .filter(d => d.startsWith('app-') && d !== 'app-template' && d !== 'app-T01-double-ma')
   .sort();
 
-console.log(`开始安装 ${appDirs.length} 个App的依赖...\n`);
+console.log(`Installing dependencies in ${apps.length} apps...`);
 
-let successCount = 0;
-let failCount = 0;
+let ok = 0, fail = 0;
 
-for (const dir of appDirs) {
-  const appDir = path.join(rootDir, dir);
-  console.log(`📦 ${dir}...`);
-  
+for (const app of apps) {
+  const appDir = path.join(ROOT, app);
   try {
-    execSync('npm install', { 
+    console.log(`Installing: ${app}...`);
+    execSync('npm install --legacy-peer-deps 2>&1', {
       cwd: appDir,
-      stdio: 'pipe',
-      timeout: 120000
+      timeout: 120000,
+      stdio: 'pipe'
     });
-    console.log(`✅ ${dir} 安装完成`);
-    successCount++;
-  } catch (error) {
-    console.log(`❌ ${dir} 安装失败: ${error.message.substring(0, 50)}`);
-    failCount++;
+    console.log(`  OK: ${app}`);
+    ok++;
+  } catch (e) {
+    console.log(`  FAIL: ${app} - ${(e.message || '').substring(0, 100)}`);
+    fail++;
   }
 }
 
-console.log(`\n安装完成: ${successCount} 成功, ${failCount} 失败`);
+console.log(`\n=== Summary ===`);
+console.log(`OK: ${ok}`);
+console.log(`Fail: ${fail}`);
+console.log(`Total: ${apps.length}`);

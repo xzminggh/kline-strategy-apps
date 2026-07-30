@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1a1a2e"/>
+      <stop offset="100%" style="stop-color:#16213e"/>
+    </linearGradient>
+  </defs>
+  <rect width="1024" height="1024" rx="200" fill="url(#bg)"/>
+  <rect x="200" y="600" width="50" height="100" fill="#3b82f6" rx="4"/>
+<rect x="280" y="620" width="50" height="80" fill="#3b82f6" rx="4"/>
+<rect x="360" y="580" width="50" height="120" fill="#3b82f6" rx="4"/>
+<rect x="440" y="400" width="50" height="300" fill="#ef4444" rx="4"/>
+<line x1="465" y1="380" x2="465" y2="250" stroke="#ffd700" stroke-width="12" stroke-linecap="round"/>
+  <polygon points="465,250 485,284.6410161513775 445,284.6410161513775" fill="#ffd700"/>
+<rect x="530" y="590" width="50" height="110" fill="#3b82f6" rx="4"/>
+<rect x="610" y="610" width="50" height="90" fill="#3b82f6" rx="4"/>
+<rect x="690" y="570" width="50" height="130" fill="#3b82f6" rx="4"/>
+<path d="M200,350 Q400,300 500,250 Q600,200 800,220" fill="none" stroke="#ef4444" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="512" y="900" fill="#aaa" font-size="60" font-family="Arial,sans-serif" font-weight="bold" text-anchor="middle">P03</text>
+</svg>

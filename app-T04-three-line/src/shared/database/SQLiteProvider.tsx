@@ -27,7 +27,10 @@ export interface DatabaseImportResult {
   success: boolean;
   backupPath?: string;
   error?: string;
+  stockCount?: number;
 }
+
+export type ImportProgressCallback = (stage: string, current: number, total: number) => void;
 
 export interface DatabaseContextType {
   db: SQLite.SQLiteDatabase | null;
@@ -39,7 +42,7 @@ export interface DatabaseContextType {
   getStocks: () => Promise<Stock[]>;
   getKlineByCode: (code: string) => Promise<KlineDaily[]>;
   getMeta: () => Promise<Record<string, string>>;
-  importDatabase: (fileUri: string) => Promise<DatabaseImportResult>;
+  importDatabase: (fileUri: string, onProgress?: ImportProgressCallback) => Promise<DatabaseImportResult>;
   getBackupList: () => Promise<string[]>;
 }
 
@@ -208,7 +211,7 @@ export const SQLiteProvider: React.FC<{ children: ReactNode }> = ({ children }) 
     } catch (error: any) {
       const msg = String(error?.message || error || '');
       if (!msg.includes('closed resource')) {
-        console.error('getStocks failed:', error);
+        console.error('getStocks failed:', String(error?.message || error));
       }
       return [];
     }
@@ -226,7 +229,7 @@ export const SQLiteProvider: React.FC<{ children: ReactNode }> = ({ children }) 
     } catch (error: any) {
       const msg = String(error?.message || error || '');
       if (!msg.includes('closed resource')) {
-        console.error('getKlineByCode failed:', error);
+        console.error('getKlineByCode failed:', String(error?.message || error));
       }
       return [];
     }
@@ -253,8 +256,26 @@ export const SQLiteProvider: React.FC<{ children: ReactNode }> = ({ children }) 
     }
   };
 
-  const importDatabase = async (fileUri: string): Promise<DatabaseImportResult> => {
+  const importDatabase = async (fileUri: string, onProgress?: ImportProgressCallback): Promise<DatabaseImportResult> => {
+    const STAGES = [
+      { name: '准备导入', weight: 1 },
+      { name: '备份当前数据库', weight: 2 },
+      { name: '复制新数据库文件', weight: 3 },
+      { name: '打开数据库连接', weight: 1 },
+      { name: '数据迁移校验', weight: 2 },
+      { name: '完成导入', weight: 1 },
+    ];
+    const totalWeight = STAGES.reduce((sum, s) => sum + s.weight, 0);
+    
+    let progress = 0;
+    const reportProgress = (stageIndex: number) => {
+      const prevWeight = STAGES.slice(0, stageIndex).reduce((sum, s) => sum + s.weight, 0);
+      progress = prevWeight + STAGES[stageIndex].weight;
+      onProgress?.(STAGES[stageIndex].name, progress, totalWeight);
+    };
+
     try {
+      reportProgress(0); // 准备导入
       const localDbPath = `${DB_DIR}${DB_NAME}`;
       const timestamp = Date.now();
       const backupPath = `${DB_DIR}kline_backup_${timestamp}.sqlite`;
@@ -269,6 +290,7 @@ export const SQLiteProvider: React.FC<{ children: ReactNode }> = ({ children }) 
 
       await FileSystemLegacy.makeDirectoryAsync(DB_DIR, { intermediates: true });
 
+      reportProgress(1); // 备份当前数据库
       const localExists = await FileSystemLegacy.getInfoAsync(localDbPath);
       let createdBackup = '';
       if (localExists.exists) {
@@ -279,25 +301,37 @@ export const SQLiteProvider: React.FC<{ children: ReactNode }> = ({ children }) 
         createdBackup = backupPath;
       }
 
+      reportProgress(2); // 复制新数据库文件
       await FileSystemLegacy.copyAsync({
         from: fileUri,
         to: localDbPath,
       });
 
+      reportProgress(3); // 打开数据库连接
       const newDb = await SQLite.openDatabaseAsync(DB_NAME, {}, DB_DIR.replace(/\/$/, ''));
+      
+      reportProgress(4); // 数据迁移校验
       try {
-        await migrateVolumeToWanShou(newDb); // 导入库统一转万手 + 置版本，避免下次启动被重置
+        await migrateVolumeToWanShou(newDb);
       } catch (mErr) {
         console.error('Imported DB volume migration failed (data may be in old unit):', mErr);
       }
+      
+      // 查询新数据库的股票数量
+      let stockCount = 0;
+      try {
+        const row = await newDb.getFirstAsync<{ cnt: number }>('SELECT COUNT(*) AS cnt FROM stocks');
+        stockCount = row?.cnt ?? 0;
+      } catch (e) {
+        // stocks表可能不存在，忽略
+      }
+      
       dbRef.current = newDb;
       setDb(newDb);
       setIsConnected(true);
 
-      if (createdBackup) {
-        return { success: true, backupPath: createdBackup };
-      }
-      return { success: true };
+      reportProgress(5); // 完成导入
+      return { success: true, backupPath: createdBackup || undefined, stockCount };
     } catch (error: any) {
       console.error('Failed to import database:', error);
       return { success: false, error: error?.message || '未知错误' };

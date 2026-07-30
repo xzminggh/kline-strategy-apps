@@ -15,6 +15,7 @@
       "supportsTablet": true
     },
     "android": {
+      "package": "com.kline.t01",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#0a0a0f"
@@ -22,6 +23,12 @@
     },
     "plugins": [
       "expo-sqlite"
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "a89c6354-02cf-49df-b0db-536bf0dca533"
+      }
+    },
+    "owner": "xzming"
   }
 }

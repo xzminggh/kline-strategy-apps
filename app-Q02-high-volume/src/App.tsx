@@ -1,7 +1,7 @@
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { SQLiteProvider } from 'kline-shared';
+import { SQLiteProvider } from './shared/database';
 import HomeScreen from './screens/HomeScreen';
 import DetailScreen from './screens/DetailScreen';
 import SettingsScreen from './screens/SettingsScreen';
@@ -19,9 +19,16 @@ export default function App() {
             tabBarStyle: {
               backgroundColor: '#0a0a0f',
               borderTopColor: '#1e293b',
+              height: 60,
+              paddingBottom: 8,
+              paddingTop: 8,
             },
             tabBarActiveTintColor: STRATEGY_CONFIG.color,
             tabBarInactiveTintColor: '#94a3b8',
+            tabBarLabelStyle: {
+              fontSize: 16,
+              fontWeight: 'bold',
+            },
           }}
         >
           <Tab.Screen 

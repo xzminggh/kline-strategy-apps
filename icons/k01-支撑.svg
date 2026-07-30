@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1a1a2e"/>
+      <stop offset="100%" style="stop-color:#16213e"/>
+    </linearGradient>
+  </defs>
+  <rect width="1024" height="1024" rx="200" fill="url(#bg)"/>
+  <path d="M200,400 Q400,380 500,400 Q600,420 820,400" fill="none" stroke="#ffd700" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M200,350 Q350,370 450,410 Q500,400 550,370 Q650,300 800,280" fill="none" stroke="#ef4444" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+<circle cx="480" cy="405" r="18" fill="#10b981" stroke="#10b981" stroke-width="0"/>
+<line x1="480" y1="430" x2="550" y2="350" stroke="#10b981" stroke-width="10" stroke-linecap="round"/>
+  <polygon points="550,350 542.2402651372076,389.2401135938616 512.1371973489325,362.8999292791209" fill="#10b981"/>
+<text x="512" y="900" fill="#aaa" font-size="60" font-family="Arial,sans-serif" font-weight="bold" text-anchor="middle">K01</text>
+</svg>
