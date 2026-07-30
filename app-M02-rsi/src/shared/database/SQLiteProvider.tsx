@@ -120,6 +120,31 @@ export const SQLiteProvider: React.FC<{ children: ReactNode }> = ({ children }) 
         await copyDatabase(); // 仅当本地缺失且存在 seed 时拷贝；Expo Go 无 seed 时落为空库
 
         const database = await SQLite.openDatabaseAsync(DB_NAME, {}, DB_DIR.replace(/\/$/, ''));
+        // 自动建表（Expo Go无seed库时保证表结构存在）
+        await database.execAsync(`
+          CREATE TABLE IF NOT EXISTS stocks (
+            code TEXT PRIMARY KEY,
+            name TEXT,
+            market TEXT,
+            sector_id TEXT,
+            status TEXT
+          );
+          CREATE TABLE IF NOT EXISTS kline_daily (
+            code TEXT,
+            date TEXT,
+            open REAL,
+            high REAL,
+            low REAL,
+            close REAL,
+            volume REAL,
+            amount REAL,
+            PRIMARY KEY(code, date)
+          );
+          CREATE TABLE IF NOT EXISTS meta (
+            key TEXT PRIMARY KEY,
+            value TEXT
+          );
+        `);
         try {
           await migrateVolumeToWanShou(database); // 原地转万手 + 置版本（幂等、安全，不删数据）
         } catch (mErr) {
