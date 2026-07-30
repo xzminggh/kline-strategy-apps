@@ -1,0 +1,117 @@
+{
+  "timestamp": "2026-07-29T15:25:11.477Z",
+  "total": 27,
+  "success": 26,
+  "fail": 1,
+  "results": [
+    {
+      "dir": "app-D01-macd-div",
+      "status": "PASS"
+    },
+    {
+      "dir": "app-D02-rsi-div",
+      "status": "PASS"
+    },
+    {
+      "dir": "app-D03-cci",
+      "status": "PASS"
+    },
+    {
+      "dir": "app-K01-ma-support",
+      "status": "PASS"
+    },
+    {
+      "dir": "app-K02-prev-highlow",
+      "status": "PASS"
+    },
+    {
+      "dir": "app-K03-fibonacci",
+      "status": "PASS"
+    },
+    {
+      "dir": "app-M01-bollinger",
+      "status": "PASS"
+    },
+    {
+      "dir": "app-M02-rsi",
+      "status": "PASS"
+    },
+    {
+      "dir": "app-M03-triple",
+      "status": "PASS"
+    },
+    {
+      "dir": "app-M04-gap",
+      "status": "PASS"
+    },
+    {
+      "dir": "app-P01-mom",
+      "status": "PASS"
+    },
+    {
+      "dir": "app-P02-roc",
+      "status": "PASS"
+    },
+    {
+      "dir": "app-P03-volume",
+      "status": "PASS"
+    },
+    {
+      "dir": "app-P04-engulfing",
+      "status": "PASS"
+    },
+    {
+      "dir": "app-Q01-low-volume",
+      "status": "PASS"
+    },
+    {
+      "dir": "app-Q02-high-volume",
+      "status": "PASS"
+    },
+    {
+      "dir": "app-S01-double-bottom",
+      "status": "PASS"
+    },
+    {
+      "dir": "app-S02-triangle",
+      "status": "PASS"
+    },
+    {
+      "dir": "app-S03-head-shoulder",
+      "status": "PASS"
+    },
+    {
+      "dir": "app-S04-hammer",
+      "status": "PASS"
+    },
+    {
+      "dir": "app-T01-double-ma",
+      "status": "PASS"
+    },
+    {
+      "dir": "app-T02-ma60",
+      "status": "PASS"
+    },
+    {
+      "dir": "app-T03-guppy",
+      "status": "PASS"
+    },
+    {
+      "dir": "app-T04-three-line",
+      "status": "PASS"
+    },
+    {
+      "dir": "app-V01-boll-squeeze",
+      "status": "PASS"
+    },
+    {
+      "dir": "app-V02-atr",
+      "status": "PASS"
+    },
+    {
+      "dir": "app-template",
+      "status": "FAIL",
+      "error": "策略ID不匹配"
+    }
+  ]
+}

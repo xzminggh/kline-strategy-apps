@@ -1,0 +1,37 @@
+# 依赖
+node_modules/
+
+# 调试日志（不提交）
+debug-logs/
+
+# Expo
+.expo/
+dist/
+web-build/
+
+# Native
+ios/
+android/
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+*.orig.*
+
+# Metro
+.metro-health-check*
+
+# debug
+npm-debug.*
+yarn-debug.*
+yarn-error.*
+
+# env
+.env
+.env.local
+.env.production
+
+# OS
+.DS_Store
+Thumbs.db
