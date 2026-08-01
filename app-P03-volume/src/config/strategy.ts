@@ -26,7 +26,7 @@ export const STRATEGY_CONFIG: StrategyConfig = {
     const n = closes.length - 1;
     if (volMA[n] === null) return { signal: 'NEUTRAL', score: 0, details: '数据不足' };
     const volRatio = volMA[n]! > 0 ? volumes[n] / volMA[n]! : 1;
-    const recentHigh = extrema.highs.length > 0 ? Math.max(...extrema.highs.slice(-3)) : closes[n];
+    const recentHigh = extrema.highs.length > 0 ? Math.max(...extrema.highs.slice(-3).map(h => h.val)) : closes[n];
     if (volRatio > 2 && closes[n] > recentHigh) {
       return { signal: 'BUY', score: 8, details: '倍量突破前高（量比' + volRatio.toFixed(1) + '）' };
     }

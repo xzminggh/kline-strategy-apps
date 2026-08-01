@@ -25,7 +25,7 @@ export const STRATEGY_CONFIG: StrategyConfig = {
     const highExtrema = findLocalExtrema(highs, 5);
     const n = closes.length - 1;
     if (lowExtrema.lows.length >= 3) {
-      const last3 = lowExtrema.lows.slice(-3);
+      const last3 = lowExtrema.lows.slice(-3).map(l => l.val);
       const head = Math.min(...last3);
       const shoulders = last3.filter(v => v > head);
       if (shoulders.length === 2 && Math.abs(shoulders[0] - shoulders[1]) / head < 0.05) {
@@ -34,7 +34,7 @@ export const STRATEGY_CONFIG: StrategyConfig = {
       }
     }
     if (highExtrema.highs.length >= 3) {
-      const last3 = highExtrema.highs.slice(-3);
+      const last3 = highExtrema.highs.slice(-3).map(h => h.val);
       const head = Math.max(...last3);
       const shoulders = last3.filter(v => v < head);
       if (shoulders.length === 2 && Math.abs(shoulders[0] - shoulders[1]) / head < 0.05) {

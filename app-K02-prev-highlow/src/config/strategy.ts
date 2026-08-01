@@ -22,8 +22,8 @@ export const STRATEGY_CONFIG: StrategyConfig = {
     const extrema = findLocalExtrema(closes, 5);
     const n = closes.length - 1;
     if (extrema.highs.length < 1 || extrema.lows.length < 1) return { signal: 'NEUTRAL', score: 0, details: '未识别到关键价位' };
-    const prevHigh = extrema.highs[extrema.highs.length - 1];
-    const prevLow = extrema.lows[extrema.lows.length - 1];
+    const prevHigh = extrema.highs[extrema.highs.length - 1].val;
+    const prevLow = extrema.lows[extrema.lows.length - 1].val;
     const distHigh = Math.abs(closes[n] - prevHigh) / prevHigh * 100;
     const distLow = Math.abs(closes[n] - prevLow) / prevLow * 100;
     if (closes[n] > prevHigh && distHigh < 3) return { signal: 'BUY', score: 6, details: '突破前高' + prevHigh.toFixed(2) + '，确认支撑' };

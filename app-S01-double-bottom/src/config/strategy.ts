@@ -26,14 +26,14 @@ export const STRATEGY_CONFIG: StrategyConfig = {
     const n = closes.length - 1;
     if (extrema.lows.length < 2) return { signal: 'NEUTRAL', score: 0, details: '未识别到足够低点' };
     const lastTwoLows = extrema.lows.slice(-2);
-    const lowDiff = Math.abs(lastTwoLows[0] - lastTwoLows[1]) / lastTwoLows[0];
+    const lowDiff = Math.abs(lastTwoLows[0].val - lastTwoLows[1].val) / lastTwoLows[0].val;
     if (lowDiff < 0.05) {
       const neckline = Math.max(...klineData.slice(-15).map((k: any) => k.high));
       if (closes[n] > neckline) return { signal: 'BUY', score: 7, details: '双底突破颈线' + neckline.toFixed(2) };
     }
     if (highExtrema.highs.length >= 2) {
       const lastTwoHighs = highExtrema.highs.slice(-2);
-      const highDiff = Math.abs(lastTwoHighs[0] - lastTwoHighs[1]) / lastTwoHighs[0];
+      const highDiff = Math.abs(lastTwoHighs[0].val - lastTwoHighs[1].val) / lastTwoHighs[0].val;
       if (highDiff < 0.05) {
         const neckline = Math.min(...klineData.slice(-15).map((k: any) => k.low));
         if (closes[n] < neckline) return { signal: 'SELL', score: -7, details: '双顶跌破颈线' + neckline.toFixed(2) };

@@ -22,25 +22,24 @@ export const STRATEGY_CONFIG: StrategyConfig = {
     const macd = calculateMACD(closes);
     const priceExtrema = findLocalExtrema(closes, 5);
     const n = closes.length - 1;
-    if (priceExtrema.lows.length < 2 || macd.histogram[n] === null) {
+    if (priceExtrema.lows.length < 2 || priceExtrema.highs.length < 2 || macd.histogram[n] === null) {
       return { signal: 'NEUTRAL', score: 0, details: '数据不足' };
     }
-    const lastLows = priceExtrema.lows.slice(-2);
-    const priceMakingLow = closes[n] <= lastLows[0] * 1.02;
-    const macdIdx1 = closes.indexOf(lastLows[0]);
-    const macdIdx2 = n;
-    const macdLow1 = macdIdx1 >= 0 ? macd.histogram[Math.min(macdIdx1, macd.histogram.length - 1)] : null;
-    const macdLow2 = macd.histogram[macdIdx2];
-    if (priceMakingLow && macdLow1 !== null && macdLow2 !== null && macdLow2 > macdLow1) {
-      return { signal: 'BUY', score: 7, details: 'MACD底背离（价格新低但MACD不新低）' };
+    // 底背离：前一个低点 vs 最近一个低点，MACD走高
+    const prevLow = priceExtrema.lows[priceExtrema.lows.length - 2];
+    const currLow = priceExtrema.lows[priceExtrema.lows.length - 1];
+    const macdLow1 = macd.histogram[prevLow.idx];
+    const macdLow2 = macd.histogram[currLow.idx];
+    if (closes[n] <= currLow.val * 1.02 && macdLow1 !== null && macdLow2 !== null && macdLow2 > macdLow1) {
+      return { signal: 'BUY', score: 7, details: `MACD底背离（${prevLow.val.toFixed(2)}→${currLow.val.toFixed(2)} MACD ${macdLow1.toFixed(2)}→${macdLow2.toFixed(2)}）` };
     }
-    const lastHighs = priceExtrema.highs.slice(-2);
-    const priceMakingHigh = closes[n] >= lastHighs[0] * 0.98;
-    const macdHighIdx = closes.indexOf(lastHighs[0]);
-    const macdHigh1 = macdHighIdx >= 0 ? macd.histogram[Math.min(macdHighIdx, macd.histogram.length - 1)] : null;
-    const macdHigh2 = macd.histogram[macdIdx2];
-    if (priceMakingHigh && macdHigh1 !== null && macdHigh2 !== null && macdHigh2 < macdHigh1) {
-      return { signal: 'SELL', score: -7, details: 'MACD顶背离（价格新高但MACD不新高）' };
+    // 顶背离：前一个高点 vs 最近一个高点，MACD走低
+    const prevHigh = priceExtrema.highs[priceExtrema.highs.length - 2];
+    const currHigh = priceExtrema.highs[priceExtrema.highs.length - 1];
+    const macdHigh1 = macd.histogram[prevHigh.idx];
+    const macdHigh2 = macd.histogram[currHigh.idx];
+    if (closes[n] >= currHigh.val * 0.98 && macdHigh1 !== null && macdHigh2 !== null && macdHigh2 < macdHigh1) {
+      return { signal: 'SELL', score: -7, details: `MACD顶背离（${prevHigh.val.toFixed(2)}→${currHigh.val.toFixed(2)} MACD ${macdHigh1.toFixed(2)}→${macdHigh2.toFixed(2)}）` };
     }
     return { signal: 'NEUTRAL', score: 0, details: '无MACD背离信号' };
   }
