@@ -19,6 +19,11 @@
     "plugins": [
       "expo-sqlite"
     ],
-    "owner": "xzming"
+    "owner": "xzming",
+    "extra": {
+      "eas": {
+        "projectId": "2281a7fc-39fc-4add-a72e-9488d28f0fc3"
+      }
+    }
   }
 }
