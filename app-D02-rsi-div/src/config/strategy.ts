@@ -26,22 +26,24 @@ export const STRATEGY_CONFIG: StrategyConfig = {
     if (priceExtrema.highs.length < 2 && priceExtrema.lows.length < 2) {
       return { signal: 'NEUTRAL', score: 0, details: '未识别到足够极值' };
     }
+    // 顶背离：前一个高点 vs 最近一个高点，RSI走低
     if (priceExtrema.highs.length >= 2) {
-      const lastHighs = priceExtrema.highs.slice(-2);
-      const highIdx1 = closes.indexOf(lastHighs[0]);
-      const rsiHigh1 = highIdx1 >= 0 ? rsi[Math.min(highIdx1, rsi.length - 1)] : null;
-      const rsiHigh2 = rsi[n];
-      if (closes[n] >= lastHighs[0] * 0.98 && rsiHigh1 !== null && rsiHigh2 !== null && rsiHigh2 < rsiHigh1) {
-        return { signal: 'SELL', score: -6, details: 'RSI隐性顶背离（价格新高但RSI不新高）' };
+      const prev = priceExtrema.highs[priceExtrema.highs.length - 2];
+      const curr = priceExtrema.highs[priceExtrema.highs.length - 1];
+      const rsiPrev = rsi[prev.idx];
+      const rsiCurr = rsi[curr.idx];
+      if (closes[n] >= curr.val * 0.98 && rsiPrev !== null && rsiCurr !== null && rsiCurr < rsiPrev) {
+        return { signal: 'SELL', score: -6, details: `RSI隐性顶背离（${prev.val.toFixed(2)}→${curr.val.toFixed(2)} RSI ${rsiPrev.toFixed(1)}→${rsiCurr.toFixed(1)}）` };
       }
     }
+    // 底背离：前一个低点 vs 最近一个低点，RSI走高
     if (priceExtrema.lows.length >= 2) {
-      const lastLows = priceExtrema.lows.slice(-2);
-      const lowIdx1 = closes.indexOf(lastLows[0]);
-      const rsiLow1 = lowIdx1 >= 0 ? rsi[Math.min(lowIdx1, rsi.length - 1)] : null;
-      const rsiLow2 = rsi[n];
-      if (closes[n] <= lastLows[0] * 1.02 && rsiLow1 !== null && rsiLow2 !== null && rsiLow2 > rsiLow1) {
-        return { signal: 'BUY', score: 6, details: 'RSI隐性底背离（价格新低但RSI不新低）' };
+      const prev = priceExtrema.lows[priceExtrema.lows.length - 2];
+      const curr = priceExtrema.lows[priceExtrema.lows.length - 1];
+      const rsiPrev = rsi[prev.idx];
+      const rsiCurr = rsi[curr.idx];
+      if (closes[n] <= curr.val * 1.02 && rsiPrev !== null && rsiCurr !== null && rsiCurr > rsiPrev) {
+        return { signal: 'BUY', score: 6, details: `RSI隐性底背离（${prev.val.toFixed(2)}→${curr.val.toFixed(2)} RSI ${rsiPrev.toFixed(1)}→${rsiCurr.toFixed(1)}）` };
       }
     }
     return { signal: 'NEUTRAL', score: 0, details: '无RSI背离信号' };

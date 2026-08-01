@@ -199,25 +199,20 @@ export function calculateGuppyMA(data: number[]): { shortTerm: number[][], longT
   return { shortTerm, longTerm };
 }
 
-export function findLocalExtrema(data: number[], windowSize: number): { highs: number[], lows: number[] } {
-  const highs: (number | null)[] = [];
-  const lows: (number | null)[] = [];
-  for (let i = 0; i < data.length; i++) {
-    if (i < windowSize || i >= data.length - windowSize) {
-      highs.push(null);
-      lows.push(null);
-      continue;
-    }
+export function findLocalExtrema(data: number[], windowSize: number): { highs: { idx: number, val: number }[], lows: { idx: number, val: number }[] } {
+  const highs: { idx: number, val: number }[] = [];
+  const lows: { idx: number, val: number }[] = [];
+  for (let i = windowSize; i < data.length - windowSize; i++) {
     let isHigh = true;
     let isLow = true;
     for (let j = i - windowSize; j <= i + windowSize; j++) {
       if (data[j] > data[i]) isHigh = false;
       if (data[j] < data[i]) isLow = false;
     }
-    highs.push(isHigh ? data[i] : null);
-    lows.push(isLow ? data[i] : null);
+    if (isHigh) highs.push({ idx: i, val: data[i] });
+    if (isLow) lows.push({ idx: i, val: data[i] });
   }
-  return { highs: highs as number[], lows: lows as number[] };
+  return { highs, lows };
 }
 
 export function calculateSlope(data: number[], period: number = 1): number[] {
