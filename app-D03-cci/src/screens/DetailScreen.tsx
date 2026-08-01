@@ -1,19 +1,42 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { View, Text, ScrollView, StyleSheet, ActivityIndicator } from 'react-native';
 import { KlineChart } from '../shared/components';
 import { STRATEGY_CONFIG } from '../config/strategy';
 import { COLORS, SPACING } from '../theme/colors';
 import { fetchStockBasicInfo, fetchMarketOverview, type StockBasicInfo, type MarketOverview } from '../shared/services/StockInfoFetcher';
+import { useDatabase } from '../shared/database';
 
 export default function DetailScreen({ route }: { route: any }) {
   const stock = route?.params?.stock;
+  const { getKlineByCode } = useDatabase();
   const [basicInfo, setBasicInfo] = useState<StockBasicInfo | null>(null);
   const [marketOverview, setMarketOverview] = useState<MarketOverview | null>(null);
   const [loading, setLoading] = useState(false);
+  const [klineData, setKlineData] = useState<any[]>(stock?.klineData || []);
+  const [signal, setSignal] = useState(stock?.signal || 'NEUTRAL');
+  const [details, setDetails] = useState(stock?.details || '');
+
+  const refreshFromDB = useCallback(async () => {
+    if (!stock?.code) return;
+    try {
+      const latest = await getKlineByCode(stock.code);
+      if (latest && latest.length > 0) {
+        setKlineData(latest as any[]);
+        const result = STRATEGY_CONFIG.execute(latest);
+        setSignal(result.signal);
+        setDetails(result.details);
+        const overview = await fetchMarketOverview(stock.code, latest);
+        setMarketOverview(overview);
+      }
+    } catch (e) {
+      console.error('refreshFromDB failed:', String(e));
+    }
+  }, [stock?.code]);
 
   useEffect(() => {
     if (stock) {
       loadStockInfo();
+      refreshFromDB();
     }
   }, [stock]);
 
@@ -22,7 +45,7 @@ export default function DetailScreen({ route }: { route: any }) {
     try {
       const info = await fetchStockBasicInfo(stock.code, stock.name);
       setBasicInfo(info);
-      const overview = await fetchMarketOverview(stock.code, stock.klineData);
+      const overview = await fetchMarketOverview(stock.code, klineData);
       setMarketOverview(overview);
     } catch (error) {
       console.error('Failed to load stock info:', String(error));
@@ -41,8 +64,8 @@ export default function DetailScreen({ route }: { route: any }) {
     );
   }
 
-  const klineReversed = [...(stock.klineData || [])].reverse();
-  const displayPrice = basicInfo?.currentPrice ?? (stock.klineData?.length > 0 ? stock.klineData[stock.klineData.length - 1].close : null);
+  const klineReversed = [...klineData].reverse();
+  const displayPrice = basicInfo?.currentPrice ?? (klineData.length > 0 ? klineData[klineData.length - 1].close : null);
   const priceChange = basicInfo?.priceChange ?? 0;
   const priceChangePct = basicInfo?.priceChangePct ?? 0;
   const isUp = priceChange >= 0;
@@ -63,7 +86,7 @@ export default function DetailScreen({ route }: { route: any }) {
             <Text style={styles.name}>{stock.name}</Text>
           </View>
           <View style={[styles.signalBadge, { backgroundColor: STRATEGY_CONFIG.color }]}>
-            <Text style={styles.signalText}>{stock.signal}</Text>
+            <Text style={styles.signalText}>{signal}</Text>
           </View>
         </View>
         {/* 第二行：价格 + 涨跌 */}
@@ -113,7 +136,7 @@ export default function DetailScreen({ route }: { route: any }) {
           <Text style={styles.cardTitle}>{stock.code} {stock.name}</Text>
         </View>
         <KlineChart
-          data={stock.klineData}
+          data={klineData}
           height={220}
           stockCode={stock.code}
           stockName={stock.name}
@@ -156,7 +179,7 @@ export default function DetailScreen({ route }: { route: any }) {
       {/* 策略详情 */}
       <View style={styles.card}>
         <Text style={styles.cardTitle}>策略详情</Text>
-        <Text style={styles.detailText}>{stock.details}</Text>
+        <Text style={styles.detailText}>{details}</Text>
       </View>
 
       {/* 基本信息 */}
